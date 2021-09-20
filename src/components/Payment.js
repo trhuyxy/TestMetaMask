@@ -32,6 +32,7 @@ export default function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
+    console.log(error);
     setError();
     await startPayment({
       setError,
