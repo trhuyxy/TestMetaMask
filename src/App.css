@@ -1,7 +1,6 @@
 .App {
   margin: 0;
   text-align: center;
-  border: 1px solid black;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -18,13 +17,31 @@
 .InputContainer input{
   margin-top: 20px;
   padding: 5px;
+  width: 500px;
 }
-.PayBtn{
+.PayBtnContainer{
   margin-top: 20px;
   margin-bottom: 20px;
 }
 .FormContainer{
   display: flex;
   flex-direction: column;
+}
+.ErrorEther p{
+  color: red;
+  font-size: 15px;
+  text-align: left;
+  margin-top: 0;
+}
+.PayBtn{
+  outline: none;
+  background-color: #0D6EFD;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 0.25rem;
+}
+.PayBtn:hover{
+  background-color: #0B5ED7;
 }
 

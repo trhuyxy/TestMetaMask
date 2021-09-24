@@ -1,5 +1,6 @@
 import { useEthers, useEtherBalance } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
+import Button from 'react-bootstrap/Button';
 import Payment from "./Payment"
 function ConnectButton() {
   const { activateBrowserWallet, account, deactivate } = useEthers();
@@ -22,11 +23,11 @@ function ConnectButton() {
           )}`}</p>
           <p>{etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH</p>
         </div>
-          <Payment />
-          <button onClick={handleDeactivateAccount}>Disconnect</button>
+          <Payment account={account} etherBalance={etherBalance} />
+          <Button variant="danger" onClick={handleDeactivateAccount}>Disconnect</Button>
       </div>
       :
-      <button onClick={handleConnectWallet}>Connect to metamask</button>
+      <Button variant="primary" onClick={handleConnectWallet}>Connect to metamask</Button>
   );
 }
 

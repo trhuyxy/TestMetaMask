@@ -1,6 +1,6 @@
 import './App.css';
 import ConnectButton from './components/ConnectButton,';
-// import { injected } from './components/connectors';
+import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   return (
     <div className="App">
