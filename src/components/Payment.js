@@ -35,14 +35,15 @@ export default function App({ account, etherBalance }) {
     e.preventDefault();
     const data = new FormData(e.target);
     setError();
+    await startPayment({
+      setError,
+      setTxs,
+      ether: data.get("ether"),
+      addr: data.get("addr")
+    })
     data.get("ether") > parseFloat(formatEther(etherBalance)).toFixed(3) ? setErrorMessageEther(true) :
       data.get("ether") < 0 ? setErrorMessageEther(true) :
-        await startPayment({
-          setError,
-          setTxs,
-          ether: data.get("ether"),
-          addr: data.get("addr")
-        })
+      setErrorMessageEther(false)
       ;
   };
   return (
