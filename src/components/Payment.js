@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { ethers } from "ethers";
-// import TxList from "./TxList";
 import React from 'react';
+import Web3 from 'web3';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { formatEther } from "@ethersproject/units";
 import { ToastContainer, toast } from 'react-toastify';
+import * as yup from "yup";
 import 'react-toastify/dist/ReactToastify.css';
 const startPayment = async ({ setError, setTxs, ether, addr }) => {
   try {
@@ -30,38 +33,45 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
 export default function App({ account, etherBalance }) {
   const [error, setError] = useState();
   const [txs, setTxs] = useState([]);
-  const [errorMessageEther, setErrorMessageEther] = useState(false);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
+  const [errorAddress,setErrrAddress] = useState(false);
+  const SignupSchema = yup.object().shape({
+    addr : yup.string(),
+    ether: yup.number().typeError('Amount must be a number').positive('Must be a positive number').lessThan(
+      etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3),
+      `Not enough ETH`)
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(SignupSchema)
+  });
+  const onSubmit = async (data) => {
+    // const data = new FormData(e.target);
     setError();
+    // console.log(JSON.stringify(data));
+    let result = Web3.utils.isAddress(data.addr)
+    result ? 
     await startPayment({
       setError,
       setTxs,
-      ether: data.get("ether"),
-      addr: data.get("addr")
-    })
-    data.get("ether") > parseFloat(formatEther(etherBalance)).toFixed(3) ? setErrorMessageEther(true) :
-      data.get("ether") < 0 ? setErrorMessageEther(true) :
-      setErrorMessageEther(false)
-      ;
+      ether: data.ether.toString(),
+      addr: data.addr
+    }) : setErrrAddress(true)
   };
   return (
-    <form action="" onSubmit={handleSubmit} className="FormContainer">
+    <form action="" onSubmit={handleSubmit(onSubmit)} className="FormContainer">
       <h3>Send ETH payment</h3>
       <div className="InputContainer">
-        <input type="text" name="addr" placeholder="Recipient Address" onClick={() => setError("")} required />
-        {error && error.slice(0, 15) === "invalid address" ?
+        <input type="text" name="addr" placeholder="Recipient Address" {...register("addr")} onClick={() => setErrrAddress(false)} required />
+        {errorAddress ?
           <div className="ErrorEther">
             <p>Address does not exist</p>
           </div> : <></>
         }
-        <input type="text" name="ether" placeholder="Amount in ETH" onClick={() => setErrorMessageEther(false)} required />
-        {errorMessageEther &&
-          <div className="ErrorEther">
-            <p>ETH Error</p>
-          </div>
-        }
+        <input type="text" name="ether" placeholder="Amount in ETH" {...register("ether")} required/>
+        {errors.ether && <p style={{color: "red", textAlign:"left"}} >{errors.ether.message}</p>}
       </div>
       <div className="PayBtnContainer">
         <button className="PayBtn" >Pay Now</button>
