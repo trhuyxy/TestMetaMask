@@ -1,12 +1,24 @@
-import { useEthers, useEtherBalance } from "@usedapp/core";
+// import { useEthers, useEtherBalance } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
 import Button from 'react-bootstrap/Button';
 import Payment from "./Payment"
+import { InjectedConnector } from '@web3-react/injected-connector'
+import { useWeb3React } from '@web3-react/core'
+export const injectedConnector = new InjectedConnector({
+  supportedChainIds: [
+    1, // Mainet
+    3, // Ropsten
+    4, // Rinkeby
+    5, // Goerli
+    42, // Kovan
+    97, //BSC
+  ],
+})
 function ConnectButton() {
-  const { activateBrowserWallet, account, deactivate } = useEthers();
-  const etherBalance = useEtherBalance(account);
+  const { chainId, account, activate, active, deactivate } = useWeb3React()
+  // const etherBalance = useEtherBalance(account);
   function handleConnectWallet() {
-    activateBrowserWallet();
+    activate(injectedConnector)
   }
   function handleDeactivateAccount(){
     deactivate();
@@ -19,11 +31,11 @@ function ConnectButton() {
           <p>Account: {account &&
           `${account.slice(0, 6)}...${account.slice(
             account.length - 4,
-            account.length
+            account.lengths
           )}`}</p>
-          <p>{etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH</p>
+          {/* <p>{etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH</p> */}
         </div>
-          <Payment account={account} etherBalance={etherBalance} />
+          <Payment account={account} />
           <Button variant="danger" onClick={handleDeactivateAccount}>Disconnect</Button>
       </div>
       :
