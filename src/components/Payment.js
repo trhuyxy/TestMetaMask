@@ -59,7 +59,7 @@ export default function App({ account, etherBalance }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const myAddress = '0x40DbeaE3012c8819E5c74da888ff7360C1e08C53';
+        const myAddress = account;
         const contract = new web3.eth.Contract(erc20AbiJson, '0x3c5539402671cda46bffd8fd668236f553ad7528');
         const tokenBalance = await contract.methods.balanceOf(myAddress).call();
         const tokenNumberBalance = tokenBalance/1000000000000000000;
@@ -147,7 +147,7 @@ export default function App({ account, etherBalance }) {
           {errors.addrtoken && <p style={{ color: "red", textAlign: "left" }} >{errors.addrtoken.message}</p>}
           <input type="text" name="contractaddr" placeholder="Contract Address" {...register("contractaddr")} required />
           {errors.contractaddr && <p style={{ color: "red", textAlign: "left" }} >{errors.contractaddr.message}</p>}
-          <input type="text" name="tokenpay" placeholder="Amount in Token" {...register("tokenpay")} required />
+          <input type="text" name="tokenpay" placeholder="Amount in CPN Token" {...register("tokenpay")} required />
           {errors.tokenpay && <p style={{ color: "red", textAlign: "left" }} >{errors.tokenpay.message}</p>}
         </div>
         <div className="PayBtnContainer">
