@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import React from 'react';
-import Web3 from 'web3';
+// import web3 from 'web3';
 import Moralis from 'moralis';
 import Spinner from 'react-bootstrap/Spinner'
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { formatEther } from "@ethersproject/units";
 import { ToastContainer, toast } from 'react-toastify';
+import erc20AbiJson from "../lib/tokenABI.abi.json"
 import * as yup from "yup";
 import 'react-toastify/dist/ReactToastify.css';
+var Web3 = require('web3');
+var web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
 const startPayment = async ({ setError, setTxs, ether, addr }) => {
   try {
     if (!window.ethereum)
@@ -31,19 +34,47 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
     toast.error(err.message);
   }
 };
-
+// const tokenAddresses = [{
+//   address: '0x2b591e99afe9f32eaa6214f7b7629768c40eeb39',
+//   token: 'HEX'
+// }, {
+//   address: '0x3d658390460295fb963f54dc0899cfb1c30776df',
+//   token: 'COVAL'
+// }, {
+//   address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+//   token: 'DAI'
+// },
+// {
+//   address: '0x3c5539402671cda46bffd8fd668236f553ad7528',
+//   token: 'CPN'
+// }]
+Moralis.initialize('x0yOs53RMcgBDnfZsRESJYbmaSS6UcdoyWzLg3Nd')
+Moralis.serverURL = 'https://dfcsys9qom1h.moralishost.com:2053/server'
 export default function App({ account, etherBalance }) {
   const [error, setError] = useState();
-  const [txs, setTxs] = useState([]);
   const [disabled, setDisabled] = useState(false)
-  const web3 = Moralis.enable();
-  // const contract = new web3.eth.Contract(contractAbi, contractAddress);
-  // const [errorAddress, setErrrAddress] = useState(false);
+  const [tokenNumber, setTokenNumber] = useState(0)
+  Moralis.enable();
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const myAddress = '0x40DbeaE3012c8819E5c74da888ff7360C1e08C53';
+        const contract = new web3.eth.Contract(erc20AbiJson, '0x3c5539402671cda46bffd8fd668236f553ad7528');
+        const tokenBalance = await contract.methods.balanceOf(myAddress).call();
+        const tokenNumberBalance = tokenBalance/1000000000000000000;
+        setTokenNumber(tokenNumberBalance)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData()
+  }, [])
+
   const SignupSchema = yup.object().shape({
     addrtoken: yup.string().test(
       'Account', 'Account not exist',
       async (value) => {
-        let result = Web3.utils.isAddress(value)
+        let result = web3.utils.isAddress(value)
         if (result === false) {
           return false
         } else {
@@ -51,10 +82,10 @@ export default function App({ account, etherBalance }) {
         }
       }
     ),
-    contractaddr:  yup.string().test(
+    contractaddr: yup.string().test(
       'Account', 'Account not exist',
       async (value) => {
-        let result = Web3.utils.isAddress(value)
+        let result = web3.utils.isAddress(value)
         if (result === false) {
           return false
         } else {
@@ -62,9 +93,9 @@ export default function App({ account, etherBalance }) {
         }
       }
     ),
-    ether: yup.number().typeError('Amount must be a number').positive('Must be a positive number').lessThan(
-      etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3),
-      `Not enough ETH`)
+    tokenpay: yup.number().typeError('Amount must be a number').positive('Must be a positive number').lessThan(
+      tokenNumber,
+      `Not enough Token`)
   });
   const {
     register,
@@ -73,16 +104,8 @@ export default function App({ account, etherBalance }) {
   } = useForm({
     resolver: yupResolver(SignupSchema)
   });
-  const onSubmit = async (data) => {
-    setError();
-    // await startPayment({
-    //   setError,
-    //   setTxs,
-    //   ether: data.ether.toString(),
-    //   addr: data.addr
-    // })
-  };
   const onSubmitToken = async (data) => {
+    console.log(tokenNumber);
     try {
       setDisabled(true)
       const options = {
@@ -127,8 +150,8 @@ export default function App({ account, etherBalance }) {
         </div>
         <div className="PayBtnContainer">
           {!disabled ? <button className="PayBtn" >Pay Now</button> : <Spinner animation="border" role="status">
-  <span className="visually-hidden">Loading...</span>
-</Spinner>}
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>}
         </div>
         <ToastContainer />
       </form>
