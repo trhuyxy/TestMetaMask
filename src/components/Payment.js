@@ -54,6 +54,7 @@ export default function App({ account, etherBalance }) {
   const [error, setError] = useState();
   const [disabled, setDisabled] = useState(false)
   const [tokenNumber, setTokenNumber] = useState(0)
+  // const [sign, setSign] = useState()
   Moralis.enable();
   useEffect(() => {
     async function fetchData() {
@@ -68,7 +69,7 @@ export default function App({ account, etherBalance }) {
       }
     }
     fetchData()
-  }, [])
+  }, [disabled])
 
   const SignupSchema = yup.object().shape({
     addrtoken: yup.string().test(
@@ -139,6 +140,7 @@ export default function App({ account, etherBalance }) {
         <ToastContainer />
       </form> */}
       <form action="" onSubmit={handleSubmit(onSubmitToken)} className="FormContainer">
+        <p>{tokenNumber} CPN</p>
         <h3>Send ERC20 Tokens payment</h3>
         <div className="InputContainer">
           <input type="text" name="addrtoken" placeholder="Recipient Address" {...register("addrtoken")} required />
