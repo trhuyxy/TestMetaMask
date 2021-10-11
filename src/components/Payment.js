@@ -85,13 +85,16 @@ export default function App({ account, etherBalance }) {
     ),
     contractaddr: yup.string().test(
       'Account', 'Account not exist',
-      async (value) => {
+      async function(value) {
         try{
-          var result = web3.eth.getCode(value)
-          if (result === '0x') {
-            return false
-          } else {
+          let value1 = this.parent['addrtoken'];
+          const contract = new web3.eth.Contract(erc20AbiJson, value);
+          const tokenBalance = await contract.methods.balanceOf(value1).call();
+          // console.log(value1);
+          if(tokenBalance){
             return true
+          } else {
+            return false
           }
         } catch(error){
           console.log(error);
