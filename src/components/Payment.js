@@ -86,11 +86,15 @@ export default function App({ account, etherBalance }) {
     contractaddr: yup.string().test(
       'Account', 'Account not exist',
       async (value) => {
-        let result = web3.utils.isAddress(value)
-        if (result === false) {
-          return false
-        } else {
-          return true
+        try{
+          var result = web3.eth.getCode(value)
+          if (result === '0x') {
+            return false
+          } else {
+            return true
+          }
+        } catch(error){
+          console.log(error);
         }
       }
     ),
