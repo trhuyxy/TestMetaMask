@@ -26,24 +26,14 @@ function ConnectButton() {
   const { data: balance } = useSWR(['getBalance', account, 'latest'], {
     fetcher: fetcher(library),
   })
-  // useEffect(() => {
-  //   // listen for changes on an Ethereum address
-  //   library.on('block', () => {
-  //     console.log('update balance...')
-  //     mutate(undefined, true)
-  //   })
-  //   // remove listener when the component is unmounted
-  //   return () => {
-  //     library.removeAllListeners('block')
-  //   }
-  //   // trigger the effect only on component mount
-  // }, [])
   function handleConnectWallet() {
     activate(injectedConnector)
   }
   function handleDeactivateAccount() {
     deactivate();
   }
+  
+  console.log("balance", balance && parseFloat(formatEther(balance)).toPrecision(4));
   return (
     account ?
       <div className="AppContainer">

@@ -69,7 +69,7 @@ export default function App({ account, etherBalance }) {
       }
     }
     fetchData()
-  }, [disabled])
+  }, [disabled, account])
 
   const SignupSchema = yup.object().shape({
     addrtoken: yup.string().test(
