@@ -51,11 +51,13 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
 Moralis.initialize('x0yOs53RMcgBDnfZsRESJYbmaSS6UcdoyWzLg3Nd')
 Moralis.serverURL = 'https://dfcsys9qom1h.moralishost.com:2053/server'
 export default function App({ account, etherBalance }) {
-  const [error, setError] = useState();
+  const [typeNet, setTypeNet] = useState();
   const [disabled, setDisabled] = useState(false)
   const [tokenNumber, setTokenNumber] = useState(0)
   // const [sign, setSign] = useState()
   Moralis.enable();
+  web3.eth.net.getNetworkType().then(a => setTypeNet(a))
+  // console.log(typeNetwork);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -69,7 +71,7 @@ export default function App({ account, etherBalance }) {
       }
     }
     fetchData()
-  }, [disabled, account])
+  }, [disabled, account, typeNet])
 
   const SignupSchema = yup.object().shape({
     addrtoken: yup.string().test(
@@ -147,7 +149,7 @@ export default function App({ account, etherBalance }) {
         <ToastContainer />
       </form> */}
       <form action="" onSubmit={handleSubmit(onSubmitToken)} className="FormContainer">
-        <p>{tokenNumber} CPN</p>
+        {/* <p>{tokenNumber} CPN</p> */}
         <h3>Send ERC20 Tokens payment</h3>
         <div className="InputContainer">
           <input type="text" name="addrtoken" placeholder="Recipient Address" {...register("addrtoken")} required />

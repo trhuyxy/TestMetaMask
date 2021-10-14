@@ -1,11 +1,13 @@
 // import { useEthers, useEtherBalance } from "@usedapp/core";
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { formatEther } from "@ethersproject/units";
 import Button from 'react-bootstrap/Button';
-import Payment from "./Payment"
-import { InjectedConnector } from '@web3-react/injected-connector'
-import { useWeb3React } from '@web3-react/core'
-import useSWR from 'swr'
+import Payment from "./Payment";
+import { InjectedConnector } from '@web3-react/injected-connector';
+import { useWeb3React } from '@web3-react/core';
+import useSWR from 'swr';
+var Web3 = require('web3');
+var web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
 export const injectedConnector = new InjectedConnector({
   supportedChainIds: [
     1, // Mainet
@@ -21,19 +23,26 @@ const fetcher = (library) => (...args) => {
   return library[method](...params)
 }
 function ConnectButton() {
-  const { account, activate, active, deactivate } = useWeb3React()
+  const [money, setMoney] = useState()
+  const { account, activate, deactivate } = useWeb3React()
   const { library } = useWeb3React()
   const { data: balance } = useSWR(['getBalance', account, 'latest'], {
     fetcher: fetcher(library),
   })
+
+  // web3.eth.net.getNetworkType()
   function handleConnectWallet() {
     activate(injectedConnector)
   }
   function handleDeactivateAccount() {
     deactivate();
   }
-  
-  console.log("balance", balance && parseFloat(formatEther(balance)).toPrecision(4));
+  // console.log(network);
+  async function getMoney() {
+    var a = await account && web3.eth.getBalance(account).then(eth => setMoney(eth))
+    return a
+  }
+  getMoney()
   return (
     account ?
       <div className="AppContainer">
@@ -44,7 +53,7 @@ function ConnectButton() {
               account.length - 4,
               account.lengths
             )}`}</p>
-          <p>{balance && parseFloat(formatEther(balance)).toPrecision(4)} ETH</p>
+          <p>{money && parseFloat(formatEther(money)).toPrecision(4)} ETH</p>
         </div>
         <Payment account={account} />
         <Button variant="danger" onClick={handleDeactivateAccount}>Disconnect</Button>
