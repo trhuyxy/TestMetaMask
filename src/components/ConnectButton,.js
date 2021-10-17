@@ -2,10 +2,14 @@
 import { useEffect, useState } from 'react'
 import { formatEther } from "@ethersproject/units";
 import Button from 'react-bootstrap/Button';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 import Payment from "./Payment";
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { useWeb3React } from '@web3-react/core';
+import EthPayment from "./EThPayment";
 import useSWR from 'swr';
+
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
 export const injectedConnector = new InjectedConnector({
@@ -24,6 +28,7 @@ const fetcher = (library) => (...args) => {
 }
 function ConnectButton() {
   const [money, setMoney] = useState()
+  const [key, setKey] = useState('home');
   const { account, activate, deactivate } = useWeb3React()
   const { library } = useWeb3React()
   const { data: balance } = useSWR(['getBalance', account, 'latest'], {
@@ -55,7 +60,20 @@ function ConnectButton() {
             )}`}</p>
           <p>{money && parseFloat(formatEther(money)).toPrecision(4)} ETH</p>
         </div>
-        <Payment account={account} />
+        {/* <Payment account={account} /> */}
+        <Tabs
+          id="controlled-tab-example"
+          activeKey={key}
+          onSelect={(k) => setKey(k)}
+          className="mb-3"
+        >
+          <Tab eventKey="home" title="Token Payment">
+            <Payment account={account} />
+          </Tab>
+          <Tab eventKey="profile" title="ETH Payment">
+            <EthPayment account={account} etherBalance={money} />
+          </Tab>
+        </Tabs>
         <Button variant="danger" onClick={handleDeactivateAccount}>Disconnect</Button>
       </div>
       :

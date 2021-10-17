@@ -50,28 +50,27 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
 // }]
 Moralis.initialize('x0yOs53RMcgBDnfZsRESJYbmaSS6UcdoyWzLg3Nd')
 Moralis.serverURL = 'https://dfcsys9qom1h.moralishost.com:2053/server'
-export default function App({ account, etherBalance }) {
+export default function App({ account }) {
   const [typeNet, setTypeNet] = useState();
   const [disabled, setDisabled] = useState(false)
   const [tokenNumber, setTokenNumber] = useState(0)
   // const [sign, setSign] = useState()
   Moralis.enable();
   web3.eth.net.getNetworkType().then(a => setTypeNet(a))
-  // console.log(typeNetwork);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const myAddress = account;
-        const contract = new web3.eth.Contract(erc20AbiJson, '0x3c5539402671cda46bffd8fd668236f553ad7528');
-        const tokenBalance = await contract.methods.balanceOf(myAddress).call();
-        const tokenNumberBalance = tokenBalance/1000000000000000000;
-        setTokenNumber(tokenNumberBalance)
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData()
-  }, [disabled, account, typeNet])
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const myAddress = account;
+  //       const contract = new web3.eth.Contract(erc20AbiJson, '0x3c5539402671cda46bffd8fd668236f553ad7528');
+  //       const tokenBalance = await contract.methods.balanceOf(myAddress).call();
+  //       const tokenNumberBalance = tokenBalance/1000000000000000000;
+  //       setTokenNumber(tokenNumberBalance)
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  //   fetchData()
+  // }, [typeNet, disabled, account])
 
   const SignupSchema = yup.object().shape({
     addrtoken: yup.string().test(
@@ -149,7 +148,6 @@ export default function App({ account, etherBalance }) {
         <ToastContainer />
       </form> */}
       <form action="" onSubmit={handleSubmit(onSubmitToken)} className="FormContainer">
-        {/* <p>{tokenNumber} CPN</p> */}
         <h3>Send ERC20 Tokens payment</h3>
         <div className="InputContainer">
           <input type="text" name="addrtoken" placeholder="Recipient Address" {...register("addrtoken")} required />
