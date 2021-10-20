@@ -68,7 +68,7 @@ export default function App({ account }) {
         const tokenNumberBalance = tokenBalance/1000000000000000000;
         setTokenNumber(tokenNumberBalance)
       } catch (error) {
-        console.log(error);
+        console.log("error");
       }
     }
     fetchData()
@@ -87,14 +87,14 @@ export default function App({ account }) {
       }
     ),
     contractaddr: yup.string().test(
-      'Account', 'Account not exist',
+      'Account1', 'Account not true ',
       async function(value) {
         try{
-          let value1 = this.parent['addrtoken'];
+          // let value1 = this.parent['addrtoken'];
           const contract = new web3.eth.Contract(erc20AbiJson, value);
-          const tokenBalance = await contract.methods.balanceOf(value1).call();
+          // const tokenBalance = await contract.methods.balanceOf(value1).call();
           // console.log(value1);
-          if(tokenBalance){
+          if(contract){
             return true
           } else {
             return false
@@ -115,6 +115,7 @@ export default function App({ account }) {
   } = useForm({
     resolver: yupResolver(SignupSchema)
   });
+  console.log(errors);
   const onSubmitToken = async (data) => {
     console.log(tokenNumber);
     try {

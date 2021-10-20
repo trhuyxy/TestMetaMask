@@ -47,7 +47,6 @@ function ConnectButton() {
   function handleDeactivateAccount() {
     deactivate();
   }
-  console.log("Type net: ", typeNet);
   // console.log(network);
   async function getMoney() {
     var a =
