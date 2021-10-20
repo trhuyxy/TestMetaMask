@@ -9,7 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Spinner from 'react-bootstrap/Spinner'
 import * as yup from "yup";
 import 'react-toastify/dist/ReactToastify.css';
-const startPayment = async ({ setError, setTxs, ether, addr, setDisabled }) => {
+const startPayment = async ({ ether, addr, setDisabled }) => {
   try {
     if (!window.ethereum)
       throw new Error("No crypto wallet found. Please install it.");
@@ -23,19 +23,19 @@ const startPayment = async ({ setError, setTxs, ether, addr, setDisabled }) => {
       value: ethers.utils.parseEther(ether)
     });
     console.log("tx", tx);
-    setTxs([tx]);
+    // setTxs([tx]);
     tx && toast.success("Transaction success")
     tx && setDisabled(false)
   } catch (err) {
-    setError(err.message);
+    // setError(err.message);
     setDisabled(false);
     toast.error(err.message);
   }
 };
 
 export default function App({ account, etherBalance }) {
-  const [error, setError] = useState();
-  const [txs, setTxs] = useState([]);
+  // const [error, setError] = useState();
+  // const [txs, setTxs] = useState([]);
   const [disabled, setDisabled] = useState(false)
   const [errorAddress, setErrrAddress] = useState(false);
   const SignupSchema = yup.object().shape({
@@ -53,14 +53,14 @@ export default function App({ account, etherBalance }) {
   });
   const onSubmit = async (data) => {
     // const data = new FormData(e.target);
-    setError();
+    // setError();
     setDisabled(true)
     // console.log(JSON.stringify(data));
     let result = Web3.utils.isAddress(data.addr)
     result ?
       await startPayment({
-        setError,
-        setTxs,
+        // setError,
+        // setTxs,
         setDisabled,
         ether: data.ether.toString(),
         addr: data.addr
